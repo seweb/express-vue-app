@@ -1,16 +1,17 @@
-// const { Router } = require('express')
-// const router = Router();
+const express = require('express')
+const { getProducts, getProduct, createProduct, updateProduct, deleteProduct }  = require('../../controllers/products')
 
-// router.get('/', (req, res, next) => {
-//   res.status(200).json({
-//     message: 'handling get request to /products'
-//   })
-// })
+const router = express.Router();
 
-// router.post('/', (req, res, next) => {
-//   res.status(200).json({
-//     message: 'handling post request to /products'
-//   })
-// })
+router
+.route('/')
+.get(getProducts)
+.post(createProduct)
 
-// router.export = router;
+router
+.route('/:id')
+.get(getProduct)
+.put(updateProduct)
+.delete(deleteProduct)
+
+module.exports = router;
