@@ -20,6 +20,13 @@ if(process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+//cors
+var cors = require('cors')
+
+if (process.env.NODE_ENV !== 'production') {
+   app.use(cors())
+}
+
 //app.use(logger)
 
 app.use('/api/v1/products', products)
