@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const slugify = require('slugify')
+const geocoder = require('../utils/geocoder')
 
 const ProductSchema = new mongoose.Schema({
   name: {
@@ -7,8 +9,8 @@ const ProductSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     maxlenght: [50, 'Name can not be more than 50 charackters'],
-    slug: String,
   },
+  slug: String,
   description: {
     type: String,
     required: [true, 'Please add a description'],
@@ -98,5 +100,30 @@ const ProductSchema = new mongoose.Schema({
   }
   
 });
+
+//Create bootcamp from name
+ProductSchema.pre('save', function(next) {
+  this.slug = slugify(this.name, { lower: true })
+  next()
+})
+
+// Geocode & create local field
+ProductSchema.pre('save', async function(next) {
+  //console.log(geocoder);
+  const loc = await geocoder.geocode(this.address);
+  this.location = {
+    type: 'Point',
+    coordinates: [loc[0].longitude, loc[0].latitude],
+    formattedAddress: loc[0].formattedAddress,
+    street: loc[0].streeName,
+    city: loc[0].city,
+    state: loc[0].stateCode,
+    zipcode: loc[0].zipcode,
+    country: loc[0].countryCode
+  }
+
+  this.address = undefined
+  next()
+})
 
 module.exports = mongoose.model('Product', ProductSchema)

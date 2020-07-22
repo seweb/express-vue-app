@@ -1,8 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv')
 const logger = require('./middleware/logger')
-const morgan = require('morgan')
-const connectDB = require('./config/db')
+const errorHandler = require('./middleware/error');
+const morgan = require('morgan');
+const connectDB = require('./config/db');
 
 
 dotenv.config({ path: './config/config.env' })
@@ -30,6 +31,8 @@ if (process.env.NODE_ENV !== 'production') {
 //app.use(logger)
 
 app.use('/api/v1/products', products)
+
+app.use(errorHandler)
 
 
 const PORT = process.env.PORT || 3000;
